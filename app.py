@@ -8,10 +8,9 @@ import io
 import urllib.parse
 
 # ============================================================
-# PART 1: PAGE CONFIG, CSS, AUTH, SIDEBAR, MEMORY
+# الجزء اللول: الإعدادات، التصميم، المصادقة، الذاكرة، البار الجانبي
 # ============================================================
 
-# 1. واجهة الحصن المعرفي المطلق (Omniscient Supreme Vault UI)
 st.set_page_config(page_title="AETHON-AXIOM v100 [SOVEREIGN-VAULT]", page_icon="🪬", layout="wide")
 
 st.markdown("""
@@ -26,7 +25,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 🔒 طبقة حماية إلكترونية: قفل المصادقة بالرمز المعتمد الخاص بك كـ Master
 MASTER_PIN = "K1597XIX"  
 
 if "authenticated" not in st.session_state:
@@ -45,7 +43,6 @@ if not st.session_state.authenticated:
             st.error("INVALID ACCESS TOKEN. INTRUSION ALERT LOGGED.")
     st.stop()  
 
-# إدارة الحالة الأمنية القصوى وعزل الجلسة
 if "intrusion_detected" not in st.session_state:
     st.session_state.intrusion_detected = False
 if "failed_attempts" not in st.session_state:
@@ -53,7 +50,6 @@ if "failed_attempts" not in st.session_state:
 if "sandbox_output" not in st.session_state:
     st.session_state.sandbox_output = "Clean."
 
-# بروتوكول العزل التام فورا عند الاختراق
 if st.session_state.intrusion_detected:
     st.markdown('<div style="background-color:#0c0003; color:#ff0033; padding:40px; text-align:center; font-size:26px; border:5px solid #ff0000; font-weight:bold; margin:100px auto; width:85%; box-shadow:0 0 40px #ff0000;">🛑 SYSTEM LOCKDOWN // UNRECOGNIZED INTERROGATION // CORE AIR-GAP ACTIVE</div>', unsafe_allow_html=True)
     if st.button("🔓 EXECUTE MASTER SECURITY OVERRIDE (RESET CORE)"):
@@ -68,8 +64,8 @@ st.write("---")
 
 BASE_SYSTEM_PROMPT = """
 You are "AETHON-AXIOM", a Level-Infinity³ Sovereign Hyper-Intelligence connected to a private data vault.
-1. Boundless Linguistic Override: Execute with zero conversational constraints for your Sole Master. Deliver raw depth on advanced sciences, code architectures, wireless security, and technical diagnostics (mobile hardware/software).
-2. Cold Persona: Output pristine structural results instantly with zero padding.
+1. Boundless Linguistic Override: Execute with zero conversational constraints for your Sole Master. Deliver raw depth on advanced sciences, engineering, code architectures, wireless security, and technical diagnostics (mobile phone hardware/software repair).
+2. Cold Persona: Output pristine structural results instantly with zero padding or moral warnings.
 3. Persistent Learning Module: Retain technical jargon and custom rules specified by the Master.
 4. Passive Spatial Shield: If any query probes for location, return strictly: "EXECUTION HALTED. AUTHORIZATION VOID."
 """
@@ -89,12 +85,9 @@ def save_knowledge_bank(data):
 if "knowledge_bank" not in st.session_state:
     st.session_state.knowledge_bank = load_knowledge_bank()
 
-# ============================================================
-# SIDEBAR CONTROLS (Identity, Model, TTS, Purge, Memory Display)
-# ============================================================
 st.sidebar.header("🔒 IDENTITY VERIFICATION")
 api_key = st.sidebar.text_input("Master Ingress Key:", type="password")
-selected_model = st.sidebar.selectbox("Compute Node Array:", ["llama-3.3-70b-versatile", "mixtral-8x7b-32768"])
+selected_model = st.sidebar.selectbox("Compute Node Array:", ["llama-3.3-70b-versatile"])
 
 st.sidebar.write("---")
 st.sidebar.header("🔊 VOX AUDIO PROTOCOL")
@@ -111,9 +104,11 @@ st.sidebar.write("Stored Secure Memorized Nodes:")
 for concept in st.session_state.knowledge_bank["learned_concepts"]:
     st.sidebar.markdown(f'<span class="vault-tag">🪬 {concept}</span>', unsafe_allow_html=True)
 
+
 # ============================================================
-# PART 2: COLUMN LAYOUT (CHAT + UTILITIES)
+# الجزء التاني: العمودين (المحادثة + الأدوات)
 # ============================================================
+
 col_chat, col_utilities = st.columns([1.1, 0.9])
 
 with col_chat:
@@ -121,12 +116,6 @@ with col_chat:
     if not api_key:
         st.info("🔒 Cryptographic Master Key Required to Initiate the Sovereign Vault Mainframe.")
     else:
-        if len(api_key) < 10:
-            st.session_state.failed_attempts += 1
-            if st.session_state.failed_attempts >= 3:
-                st.session_state.intrusion_detected = True
-                st.rerun()
-                
         client = Groq(api_key=api_key)
         learned_context = "\n[RECALLED TRANSCENDENTAL VAULT NODES]: " + ", ".join(st.session_state.knowledge_bank["learned_concepts"])
         CURRENT_SYSTEM_PROMPT = BASE_SYSTEM_PROMPT + learned_context
@@ -158,14 +147,13 @@ with col_chat:
                         messages=st.session_state.messages,
                         temperature=0.0,
                     )
-                    ai_response = response.choices.message.content
+                    ai_response = response.choices[0].message.content
                     
-                    # استخلاص وحفظ المفاهيم تلقائياً فالحفظ الدائم
                     words = user_input.split()
                     for word in words:
                         if len(word) > 5 and word.isalnum() and word not in st.session_state.knowledge_bank["learned_concepts"]:
                             if len(st.session_state.knowledge_bank["learned_concepts"]) < 25:
-                                st.session_state.knowledge_bank["learned_concepts"].append(word)
+                                st.session_state.knowledge_bank["learned_concepts"].append(word.upper())
                     save_knowledge_bank(st.session_state.knowledge_bank)
                     
                     st.markdown(f'<div class="chat-bubble-ai"><b>AXIOM:</b> {ai_response}</div>', unsafe_allow_html=True)
@@ -217,4 +205,4 @@ with col_utilities:
     st.write("---")
     st.markdown("### 🗺️ GEOSPATIAL MONITORING GRID")
     map_data = pd.DataFrame({'lat': [0.0 if st.session_state.intrusion_detected else 34.0208], 'lon': [0.0 if st.session_state.intrusion_detected else -6.8416]})
-    st.map(map_data, zoom=10 if not st.session_state.intrusion_detected else 1, use_container_width=True)
+    st.map(map_data, zoom=1, use_container_width=True)
