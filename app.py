@@ -91,6 +91,7 @@ selected_model = st.sidebar.selectbox("Compute Node Array:", ["llama-3.3-70b-ver
 st.sidebar.write("---")
 st.sidebar.header("🔊 VOX AUDIO PROTOCOL")
 enable_tts = st.sidebar.checkbox("Enable Automated Vox Audio Output", value=False)
+
 st.sidebar.write("---")
 st.sidebar.header("📂 SOVEREIGN DATA STORAGE")
 if st.sidebar.button("Purge Database Bank"):
