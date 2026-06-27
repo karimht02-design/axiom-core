@@ -1,12 +1,12 @@
-import streamlit st
+import streamlit as st
 from groq import Groq
 import json
 import time
-import pandas pd
+import pandas as pd
 import os
 import io
 import urllib.parse
-import streamlit.components.v1 components
+import streamlit.components.v1 as components
 import base64
 
 # 1. واجهة الإمبراطورية المعرفية اللامتناهية (Universal Infinite Mainframe UI)
